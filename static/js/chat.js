@@ -158,6 +158,16 @@ var simulatedServerCommands = {
         
         setTimeout(()=>{w.events.chatmod.splice(idx, 1); serverChatResponse("Client unmuted")}, muteTime * 1000)
     },
+	clearmutes: (args) => {
+        if(!USER_LEVEL) return;
+        let cnt = 0;
+        for(let i = 0; i < muteList.length; i++) {
+            let muteFnIDX = w.events.chatmod.indexOf(muteList[i]);
+            w.events.chatmod.splice(muteFnIDX, 1);
+            cnt++;
+        };
+        serverChatResponse(`Unmuted ${cnt} client${cnt>1?"s":""}.`)
+    },
     worlds: (args) => {
         if(!(USER_LEVEL >= 2)) return;
         serverChatResponse("Top active worlds:<br><div style=\"background-color: #DADADA\"><span style=\"font-family: monospace; font-size: 13px\">(main) [1]</span></div>")
