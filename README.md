@@ -18,3 +18,5 @@ Additions:
 -removed networkHTTP (relies on ajax/ links, not very offline)
 
 -misc. changes
+
+clone this repo then open "offlineowot_lts.html" in the pages folder to get it going
