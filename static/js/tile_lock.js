@@ -56,7 +56,7 @@ function keydown_admlck(e) {
     if(e.ctrlKey) {
         admlck.ctrlDown = true;
         admlckActivated.style.display = "";
-        admlck.color = "#FF0000";
+        admlck.color = "#FFAA00";
         admlck.renderTile(true);
         admlck.handleLock(currentPosition[0], currentPosition[1]);
     }
@@ -94,7 +94,7 @@ function keyup_admlck(e) {
     if(!admlck.activated) return;
     admlck.ctrlDown = false;
     admlckActivated.style.display = "none";
-    admlck.color = "#00FF00";
+    admlck.color = "#00FFFF";
     // remove color of tile
     if(admlck.lastPos) {
         tiles[admlck.lastPos[1] + "," + admlck.lastPos[0]].backgroundColor = "";
