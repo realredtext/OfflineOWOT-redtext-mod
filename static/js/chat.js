@@ -123,15 +123,15 @@ function serverChatResponse(msg, html=true) {
 };
 
 var simulatedServerCommands = {
-	channel: (args) => {
+    channel: (args) => {
         if(!USER_LEVEL) return;
         let dataArr = [`Found 1 channel(s) for this world.`, `<b>Name:</b> ${selectedChatTab==0?"_":"global"}`, `<b>Desc:</b> ${selectedChatTab==0?"Front page channel":"The global channel - Users can access this channel from any page on OWOT"}`, `<b>Created:</b> (UTC) March 24, 2021, 1:32:11 PM`, "----------------", `<b>Default channel id:</b> ${selectedChatTab==0?"2":html_tag_esc("<none>")}`]
         serverChatResponse(dataArr.join("<br>"))
     },
-    stats: (args) => {
+    stats: () => {
         serverChatResponse("World stats:<br>Views: 1<br>Created on: March 24 2021, 5:32:11 PM");
     },
-    whoami: (args) => {
+    whoami: () => {
         let user = state.userModel;
         let yw = YourWorld;
         let levelCaption = USER_LEVEL==3?"(Operator)":USER_LEVEL==2?"(Superuser)":USER_LEVEL==1?"(Staff)":"(Normal)";
@@ -141,7 +141,7 @@ var simulatedServerCommands = {
         
         serverChatResponse(`Who am I:<br>${list.join("<br>&emsp;")}`)
     },
-    uptime: (args) => {
+    uptime: () => {
         serverChatResponse(`Server uptime: ${uptime()}`);
     },
     mute: (args) => {
@@ -160,7 +160,7 @@ var simulatedServerCommands = {
     },
     worlds: (args) => {
         if(!(USER_LEVEL >= 2)) return;
-        serverChatResponse("Top active worlds:<br><span style=\"background-color: #ddd;\">(main) [1]</span>")
+        serverChatResponse("Top active worlds:<br><div style=\"background-color: #DADADA\"><span style=\"font-family: monospace; font-size: 13px\">(main) [1]</span></div>")
     }
 }
             
