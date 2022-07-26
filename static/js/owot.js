@@ -1424,6 +1424,13 @@ var currentPositionInitted = false;
 var currentMousePosition = [0, 0, 0, 0]; // [x, y, pageX, pageY]; Position of mouse cursor.
 
 var Tile = {};
+Tile.get = (tileX, tileY) => {
+	var tile = tiles[tileY + "," + tileX];
+	return tile;
+}
+Tile.loaded = (tileX, tileY) => {
+	return !!Tile.get(tileX, tileY);
+}
 var tileCount = 0;
 Tile.set = function(tileX, tileY, data) {
     var str = tileY + "," + tileX;
@@ -1600,7 +1607,6 @@ function getWorldProps(world, type, cb) {
         }
     });
 };
-            
 
 
 // begin OWOT's client
@@ -3907,7 +3913,7 @@ function renderTile(tileX, tileY, redraw) {
     if(writability == null) computed_writability = state.worldModel.writability;
     if(!tile.backgroundColor) {
         if(computed_writability == -1) owotCtx.fillStyle = "#CCC";
-        if(computed_writability == 0) owotCtx.fillStyle = styles.public;
+        if(computed_writability == 0) owotCtx.fillStyle = "#FFF";
         if(computed_writability == 1) owotCtx.fillStyle = styles.member;
         if(computed_writability == 2) owotCtx.fillStyle = styles.owner;
     } else {
