@@ -123,6 +123,11 @@ function serverChatResponse(msg, html=true) {
 };
 
 var simulatedServerCommands = {
+	channel: (args) => {
+        if(!USER_LEVEL) return;
+        let dataArr = [`Found 1 channel(s) for this world.`, `<b>Name:</b> ${selectedChatTab==0?"_":"global"}`, `<b>Desc:</b> ${selectedChatTab==0?"Front page channel":"The global channel - Users can access this channel from any page on OWOT"}`, `<b>Created:</b> (UTC) March 24, 2021, 1:32:11 PM`, "----------------", `<b>Default channel id:</b> ${selectedChatTab==0?"2":html_tag_esc("<none>")}`]
+        serverChatResponse(dataArr.join("<br>"))
+    },
     stats: (args) => {
         serverChatResponse("World stats:<br>Views: 1<br>Created on: March 24 2021, 5:32:11 PM");
     },
