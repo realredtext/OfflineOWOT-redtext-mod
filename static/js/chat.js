@@ -129,7 +129,7 @@ var simulatedServerCommands = {
         serverChatResponse(dataArr.join("<br>"))
     },
     stats: () => {
-        serverChatResponse("World stats:<br>Views: 1<br>Created on: March 24 2021, 5:32:11 PM");
+        serverChatResponse(`Stats for world<br>Creation date: (UTC) March 15 2021, 1:32:11 PM<br>View count: ${viewCount}`);
     },
     whoami: () => {
         let user = state.userModel;
