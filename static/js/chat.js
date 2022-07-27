@@ -51,7 +51,7 @@ function api_chat_send(message, opts) {
     if(!message) return;
     message = message.replace(/\uFDFD/g, "");
     if(!opts) opts = {};
-    var exclude_commands = opts.exclude_commands;
+    var exclude_commands = opts.exclude_commands || false;
     var nick = opts.nick || YourWorld.Nickname;
     var location = opts.location ? opts.location : (selectedChatTab == 0 ? "page" : "global");
 
@@ -82,18 +82,18 @@ function api_chat_send(message, opts) {
         var args = message.substr(1).split(" ");
         var command = args[0].toLowerCase();
         args.shift();
-        if(client_commands.hasOwnProperty(command)) {
+        if(client_commands[command]) {
             client_commands[command](args);
             return;
         };
-        if(simulatedServerCommands.hasOwnProperty(command)) {
+        if(simulatedServerCommands[command]) {
             simulatedServerCommands[command](args);
             return;
-        if(!(command in simulatedServerCommands) && !(command in client_commands)) {
-                serverChatResponse(`${command} is not a supported command!`);
+        }
+        if(!simulatedServerCommands[command] && !client_commands[command]) {
+                serverChatResponse(`Invalid command: /${command}`);
                 return;
             }
-        }
     }
     var isCommand = false;
     if(!exclude_commands && message.startsWith("/")) {
@@ -122,6 +122,8 @@ function serverChatResponse(msg, html=true) {
     addChat(null, 0, "user", "[ Server ]", msg, "Server", html, html, html, "#f00", getDate())
 };
 
+var muteList = [];
+
 var simulatedServerCommands = {
     channel: (args) => {
         if(!USER_LEVEL) return;
@@ -135,9 +137,12 @@ var simulatedServerCommands = {
         let user = state.userModel;
         let yw = YourWorld;
         let levelCaption = USER_LEVEL==3?"(Operator)":USER_LEVEL==2?"(Superuser)":USER_LEVEL==1?"(Staff)":"(Normal)";
-        let levelStr = `${USER_LEVEL} ${levelCaption}`
+        let levelStr = `${USER_LEVEL} ${levelCaption}`;
         
-        let list = [`Username: <b style="color: ${int_to_hexcode(localStorage.getItem("chatcolor")*1)}">${user.username}</b>`, `Nickname: ${yw.Nickname}`, `Level: ${levelStr}`, `ID: ${w.clientId}`];
+        let wlCaption = WORLD_LEVEL==2?"(Owner)":WORLD_LEVEL==1?"(Member)":"(Public)";
+        let wlStr = `${WORLD_LEVEL} ${wlCaption}`
+        
+        let list = [`Username: <b style="color: ${int_to_hexcode(localStorage.getItem("chatcolor")*1)}">${user.username}</b>`, `Nickname: ${yw.Nickname}`, `Level: ${levelStr}`, `World level: ${wlStr}`, `ID: ${w.clientId}`];
         
         serverChatResponse(`Who am I:<br>${list.join("<br>&emsp;")}`)
     },
@@ -145,7 +150,8 @@ var simulatedServerCommands = {
         serverChatResponse(`Server uptime: ${uptime()}`);
     },
     mute: (args) => {
-        if(!(USER_LEVEL >= 1)) return;
+        let canMute = USER_LEVEL !== 0 || WORLD_LEVEL === 2;
+        if(!canMute) return;
         let mutedID = parseInt(args[0]);
         let muteTime = parseInt(args[1]);
         let muteFn = (e) => {
@@ -153,24 +159,27 @@ var simulatedServerCommands = {
         }
         
         w.events.chatmod.push(muteFn);
+        muteList.push(muteFn);
         let idx = w.events.chatmod.indexOf(muteFn);
+        let ml_idx = muteList.indexOf(muteFn);
         serverChatResponse(`Client muted until ${convertToDate(Date.now() + (muteTime * 1000))}`);
         
-        setTimeout(()=>{w.events.chatmod.splice(idx, 1); serverChatResponse("Client unmuted")}, muteTime * 1000)
+        setTimeout(()=>{w.events.chatmod.splice(idx, 1); muteList.splice(ml_idx, 1); serverChatResponse("Client unmuted")}, muteTime * 1000);
     },
-	clearmutes: (args) => {
-        if(!USER_LEVEL) return;
-        let cnt = 0;
+    clearmutes: (args) => {
+        let canClearMutes = USER_LEVEL !== 0 || WORLD_LEVEL === 2;
+        if(!canClearMutes) return;
+        var cnt = 0
         for(let i = 0; i < muteList.length; i++) {
             let muteFnIDX = w.events.chatmod.indexOf(muteList[i]);
             w.events.chatmod.splice(muteFnIDX, 1);
             cnt++;
         };
-        serverChatResponse(`Unmuted ${cnt} client${cnt>1?"s":""}.`)
+        serverChatResponse(`Unmuted ${cnt} client${cnt>1?"s":""}.`);
     },
     worlds: (args) => {
         if(!(USER_LEVEL >= 2)) return;
-        serverChatResponse("Top active worlds:<br><div style=\"background-color: #DADADA\"><span style=\"font-family: monospace; font-size: 13px\">(main) [1]</span></div>")
+        serverChatResponse("Currently loaded worlds (top 1000):<br><div style=\"background-color: #DADADA\"><span style=\"font-family: monospace; font-size: 13px\">-> (main) [1]</span></div>")
     }
 }
             
@@ -640,7 +649,7 @@ function addChat(chatfield, id, type="user", nickname, message, realUsername, op
     maxScroll = field.scrollHeight - field.clientHeight;
     if(doScrollBottom) {
         field.scrollTop = maxScroll;
-    }
+    };
 }
 
 function getChatfield() {
