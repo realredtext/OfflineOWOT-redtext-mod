@@ -9,6 +9,7 @@ var chatWriteHistoryMax  = 100; // maximum size of chat write history length
 var chatWriteHistoryIdx  = -1; // location in chat write history
 var serverPingTime       = 0;
 var chatLimitCombChars   = true;
+var chatEmotes           = true;
 var chatWriteTmpBuffer   = "";
 var defaultChatColor     = window.localStorage ? parseInt(localStorage.getItem("chatcolor")) : null; // 24-bit Uint
 
@@ -493,6 +494,59 @@ elm.chat_global_tab.addEventListener("click", function() {
     }
 });
 
+var emoteList = {
+    "403": [0, 19],
+    "OHHELLNO": [19, 16],
+    "aaaHD": [35, 16],
+    "aha": [51, 16],
+    "areyoukidding": [67, 16],
+    "awesome": [83, 16],
+    "awesome2": [99, 16],
+    "bad": [115, 16],
+    "beepboop": [131, 16],
+    "bootiful": [147, 16],
+    "bruh": [163, 16],
+    "catthinkaaa": [179, 22],
+    "chaos": [201, 16],
+    "ded": [217, 16],
+    "derp": [233, 16],
+    "dislike": [249, 15],
+    "durr": [264, 16],
+    "erhb": [280, 16],
+    "failwhale": [296, 35],
+    "fpthinkaaa": [331, 16],
+    "huh": [347, 16],
+    "karp": [363, 17],
+    "lenny": [380, 16],
+    "like": [396, 15],
+    "lol": [411, 16],
+    "mad": [427, 16],
+    "meh": [443, 16],
+    "mmm": [459, 16],
+    "neat": [475, 16],
+    "no": [491, 16],
+    "notcool": [507, 16],
+    "oOoo": [523, 16],
+    "ohno": [539, 16],
+    "okthen": [555, 16],
+    "omg": [571, 16],
+    "ouch": [587, 16],
+    "sad": [603, 16],
+    "sadsmug": [619, 16],
+    "scruffy": [635, 19],
+    "smug": [654, 16],
+    "stahp": [670, 16],
+    "teef": [686, 16],
+    "thinq": [702, 16],
+    "thunk": [718, 16],
+    "tri": [734, 17],
+    "troll1": [751, 16],
+    "void": [767, 16],
+    "what": [783, 16],
+    "yeesh": [799, 16],
+    "zzz": [815, 16]
+};
+
 /*
     [type]:
     * "user"      :: registered non-renamed nick
@@ -615,7 +669,30 @@ function addChat(chatfield, id, type="user", nickname, message, realUsername, op
         } else if(pm == "from_me") {
             pmDom.innerText = "Me -> ";
         }
-    }
+    };
+    
+    	emote_parse: if(chatEmotes) {
+		var emote_split = message.split(":");
+		if(emote_split.length < 3) break emote_parse;
+		var parsed = [];
+
+		for(var i = 0; i < (emote_split.length - 1); ++i) {
+			if(i % 2 == 0) { // isn't between two : chars
+				parsed.push(emote_split[i]);
+			} else if(emoteList.hasOwnProperty(emote_split[i])) { // good emote
+				var position = emoteList[emote_split[i]];
+				parsed.push("<div title=':" + emote_split[i]
+					+ ":' class='chat_emote' style='background-position-x:-" + position[0]
+					+ "px;width:" + position[1] + "px'></div>");
+			} else { // invalid emote
+				parsed.push(":" + emote_split[i] + ":");
+			}
+		}
+
+		if (emote_split.length % 2 == 0) parsed.push(":")
+		parsed.push(emote_split[emote_split.length - 1])
+		message = parsed.join("");
+	}
 
     var msgDom = document.createElement("span");
     msgDom.innerHTML = "&nbsp;" + message;
