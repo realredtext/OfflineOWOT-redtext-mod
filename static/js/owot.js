@@ -1608,9 +1608,15 @@ function getWorldProps(world, type, cb) {
     });
 };
 
+function wipeViews() {
+    localStorage.removeItem("views");
+    viewCount = 1;
+}
 
 // begin OWOT's client
 function begin() {
+    viewCount++;
+    localStorage.setItem("views", viewCount+"");
     if(Debug) {
         w.doAnnounce("Client is in debug mode");
         console.log("Client is in debug mode");
