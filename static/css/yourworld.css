@@ -367,3 +367,9 @@ a:visited {
 #textInput {
     font-size: 16px; /* prevent zooming on mobile keyboard */
 }
+.chat_emote {
+	background: url(../emotes.png);
+	height: 1em;
+	vertical-align: middle;
+	display: inline-block;
+}
