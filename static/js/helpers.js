@@ -1,3 +1,4 @@
+var viewCount = +localStorage.getItem("views") || 0;
 function assert(exp, optMsg) {
     if (!exp) {
         throw new Error(optMsg || "Assertion failed");
