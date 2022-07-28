@@ -1,0 +1,40 @@
+<html>
+    <head>
+		<title>4ile n0t 4ound</title>
+		<link rel="shortcut icon" type="image/png" href="../static/favicon.png">
+		<link rel="stylesheet" type="text/css" href="../static/css/site.css">
+		<link rel="shortcut icon" href="../static/favicon.png">
+        <script src="../static/js/state.js"></script>
+	</head>
+	<body>
+		<div class="container">
+			<div class="span-19">
+				<div id="topbar" class="span-19 last">
+							Logged in as fp:
+					<a href="./home.html">Home</a>
+				</div>
+				<div class="span-19 last">
+<h1>Page not found</h1>
+				</div>
+				<div class="span-14">
+<a href="./offlineowot_lts.html">Return to the front page</a>
+				</div>
+				<div class="span-5 last">
+					&nbsp;
+				</div>
+			</div>
+		</div>
+        <script>
+            const topbar = document.getElementById("topbar");
+            if(state.userModel.is_superuser) {
+                var panelSpan = document.createElement("span");
+                panelSpan.innerHTML = " | <a href=\"administrator.html\">Admin Panel</a>";
+                topbar.appendChild(panelSpan);
+            };
+            if(state.userModel.is_staff) {
+                var managerSpan = document.createElement("span");
+                managerSpan.innerHTML = " | <a href=\"script_manager.html\">Script Manager</a>";
+                topbar.appendChild(managerSpan);
+            };
+        </script>
+</body></html>

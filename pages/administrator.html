@@ -1,0 +1,229 @@
+<html lang="en"><head>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+		<title>Admin Panel | OfflineOWOT</title>
+		<link rel="stylesheet" href="../static/css/print.css" type="text/css" media="print">
+		<link rel="shortcut icon" type="image/png" href="../static/favicon.png">
+		<link rel="stylesheet" type="text/css" href="../static/css/site.css">
+		<link rel="shortcut icon" href="../static/favicon.png">
+	    <link rel="stylesheet" type="text/css" href="../static/css/autocomplete.css">	
+        <script src="../static/js/state.js"></script>
+	</head>
+	<body>
+		<div class="container">
+			<div class="span-19">
+				<div id="topbar" class="span-19 last">
+					
+							Logged in as fp:
+						
+					
+					<a href="home.html">Home</a>
+						
+							| <a href="administrator.html">Admin Panel</a>
+						
+							| <a href="script_manager.html">Script Manager</a>
+				</div>
+
+				<div class="span-19 last">
+					
+	<h1>Administrator Panel</h1>
+
+				</div>
+
+				<div class="span-14">
+
+	<div class="content_set">
+		<div class="content_set_title">User Ranks</div>
+		<div class="content_set_content">
+			<ul>
+				<li>
+					<span>fp</span>
+
+						(operator)
+						<a href="/administrator/user/fp/">configure</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<div class="content_set">
+		<div class="content_set_title">Set Custom Rank</div>
+		<div class="content_set_content">
+			<form onsubmit="return goto_custom_rank_usr();">
+				User name: 
+				<input type="text" name="username" id="custom_rank_username_config" value="">
+				<input type="submit" value="Modify">
+			</form>
+		</div>
+	</div>
+	<div class="content_set">
+		<div class="content_set_title">All Ranks</div>
+		<div class="content_set_content">
+			
+			<a href="/administrator/manage_ranks">Manage Ranks</a><br>
+			
+			<table style="table-layout: fixed; display: table-cell;">
+				<tbody>
+					
+					<tr>
+						<td style="font-weight: bold; width: auto;">
+							0:
+						</td>
+						<td>
+							Default
+						</td>
+					</tr>
+					
+					<tr>
+						<td style="font-weight: bold; width: auto;">
+							1:
+						</td>
+						<td>
+							Staff
+						</td>
+					</tr>
+					
+					<tr>
+						<td style="font-weight: bold; width: auto;">
+							2:
+						</td>
+						<td>
+							Superuser
+						</td>
+					</tr>
+					
+					<tr>
+						<td style="font-weight: bold; width: auto;">
+							3:
+						</td>
+						<td>
+							Operator
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<div class="content_set">
+		<div class="content_set_title">Set Announcement</div>
+		<div class="content_set_content">
+			
+			<form method="POST" action=".">
+				Text: 
+				<input type="text" name="announcement" id="announcement" value="" style="width: 100%;">
+				<input type="submit" value="Set">
+			</form>
+		</div>
+	</div>
+                    <div class="content_set">
+		<div class="content_set_title">Server Uptime</div>
+		<div class="content_set_content">
+			<span id="uptime"></span>
+		</div>
+	</div>
+	<div class="content_set">
+		<div class="content_set_title">Connected Clients</div>
+		<div class="content_set_content">
+			<span>1 client(s)</span>
+		</div>
+	</div>
+
+				</div>
+				<div class="span-5 last">
+					&nbsp;
+				</div>
+			</div>
+		</div>
+		
+		
+<script type="text/javascript" src="../static/autocomplete.js"></script>
+
+		<script>
+			function addCollapsableEvent(title, cont) {
+				title.onclick = function() {
+					var disp = cont.style.display;
+					if(disp == "none") {
+						cont.style.display = "";
+					} else {
+						cont.style.display = "none";
+					}
+				}
+			}
+			function makeCollapsableSections() {
+				var sections = document.getElementsByClassName("content_set");
+				for(var i = 0; i < sections.length; i++) {
+					var sect = sections[i];
+					var titles = sect.getElementsByClassName("content_set_title");
+					var conts = sect.getElementsByClassName("content_set_content");
+					if(!titles.length || !conts.length) continue;
+					var title = titles[0];
+					var cont = conts[0];
+					addCollapsableEvent(title, cont);
+				}
+			}
+			makeCollapsableSections();
+		</script>
+        <script>
+        if(!state.userModel.is_superuser) {
+            window.location.href = "not_found.html"
+        };
+        var start_time = Date.now();
+var _time_ago = ["millisecond", "second", "minute", "hour", "day", "month", "year"];
+function uptime(custom_ms_ago) {
+	// (milliseconds ago)
+	var difference = custom_ms_ago || (Date.now() - start_time);
+	var milliseconds_ago = difference;
+	var _data = _time_ago[0];
+	var show_minutes = true; // EG: ... and 20 minutes
+	var divided = 1;
+	if(milliseconds_ago >= 30067200000) {
+		_data = _time_ago[6];
+		divided = 30067200000;
+		milliseconds_ago = Math.floor(milliseconds_ago / divided);
+	} else if(milliseconds_ago >= 2505600000) {
+		_data = _time_ago[5];
+		divided = 2505600000;
+		milliseconds_ago = Math.floor(milliseconds_ago / divided);
+	} else if(milliseconds_ago >= 86400000) {
+		_data = _time_ago[4];
+		divided = 86400000;
+		milliseconds_ago = Math.floor(milliseconds_ago / divided);
+	} else if(milliseconds_ago >= 3600000) {
+		_data = _time_ago[3];
+		divided = 3600000;
+		milliseconds_ago = Math.floor(milliseconds_ago / divided);
+	} else if(milliseconds_ago >= 60000) {
+		_data = _time_ago[2];
+		divided = 60000;
+		show_minutes = false;
+		milliseconds_ago = Math.floor(milliseconds_ago / divided);
+	} else if(milliseconds_ago >= 1000) {
+		_data = _time_ago[1];
+		divided = 1000;
+		show_minutes = false;
+		milliseconds_ago = Math.floor(milliseconds_ago / divided);
+	} else {
+		show_minutes = false;
+	}
+	if(milliseconds_ago !== 1) {
+		_data += "s";
+	}
+	var extra = "";
+	if(show_minutes) {
+		var t_difference = difference;
+		t_difference -= divided;
+		if(t_difference > 0) {
+			t_difference %= divided;
+			t_difference = Math.floor(t_difference / 60000);
+			if(t_difference > 0) {
+				extra = " and " + t_difference + " minute";
+				if(t_difference != 1) extra += "s";
+			}
+		}
+	}
+	return milliseconds_ago + " " + _data + extra;
+};
+            var uptimeSpan = document.getElementById("uptime");
+            uptimeSpan.innerText = uptime();
+        </script>
+	
+</body></html>
