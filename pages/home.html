@@ -79,7 +79,7 @@
         const topBar = document.getElementById("topbar");
         if(state.userModel.is_superuser) {
             var panelSpan = document.createElement("span");
-            panelSpan.innerHTML = " | <a href=\"administrator.html\">Admin Panel (WIP)</a>"
+            panelSpan.innerHTML = " | <a href=\"administrator.html\">Admin Panel</a>"
             topBar.appendChild(panelSpan);
         };
         if(state.userModel.is_staff) {
