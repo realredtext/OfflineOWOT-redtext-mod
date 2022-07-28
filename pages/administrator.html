@@ -223,7 +223,10 @@ function uptime(custom_ms_ago) {
 	return milliseconds_ago + " " + _data + extra;
 };
             var uptimeSpan = document.getElementById("uptime");
-            uptimeSpan.innerText = uptime();
+            function updateUptime() {
+                uptimeSpan.innerText = uptime();
+            };
+            setInterval(updateUptime, 1000);
         </script>
 	
 </body></html>
