@@ -24,3 +24,16 @@ var state = {
         "color_text":0
     }
 };
+//fixing permissions
+if(state.userModel.is_operator) {
+    state.userModel.is_superuser = true;
+    state.userModel.is_staff = true;
+};
+
+if(state.userModel.is_superuser) {
+    state.userModel.is_staff = true;
+};
+
+if(state.userModel.is_owner) {
+    state.userModel.is_member = true;
+};
