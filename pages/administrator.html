@@ -230,8 +230,12 @@ var announcementForm = document.getElementById("announcement_form");
 
 announcementSubmit.onclick = () => {
     var announcementText = announcementForm.value;
-    localStorage.setItem("announcement", announcementText);
-    announcementForm.value = "";
+    if(announcementText === "") {
+        localStorage.removeItem("announcement");
+    } else {
+        localStorage.setItem("announcement", announcementText);
+        announcementForm.value = "";
+    }
 }
         </script>
 	
