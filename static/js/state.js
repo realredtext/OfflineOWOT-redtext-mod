@@ -22,7 +22,9 @@ var state = {
         "pathname":"",
         "chat_permission":0,
         "color_text":0
-    }
+    },
+    "announcement": localStorage.getItem("announcement") || undefined;
+
 };
 //fixing permissions
 if(state.userModel.is_operator) {
