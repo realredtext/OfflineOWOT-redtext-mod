@@ -1,0 +1,92 @@
+<html lang="en">
+    <head>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+		<title>Homepage | OfflineOWOT</title>
+		<link rel="stylesheet" href="../static/css/print.css" type="text/css" media="print">
+		<link rel="shortcut icon" type="image/png" href="../static/favicon.png">
+		<link rel="stylesheet" type="text/css" href="../static/css/site.css">
+		<link rel="shortcut icon" href="../static/favicon.png">
+        <script src="../static/js/state.js"></script>
+	</head>
+	<body>
+		<div class="container">
+			<div class="span-19">
+				<div id="topbar" class="span-19 last">
+					
+						
+							Logged in as fp:
+						
+					
+					<a href="home.html">Home</a>
+				</div>
+
+				<div class="span-19 last">
+					
+	<h1>About OfflineOWOT</h1>
+
+				</div>
+
+				<div class="span-14">
+					
+	<div class="text">
+		<p>
+			<a href="offlineowot_lts.html">OfflineOWOT</a> is an infinite
+			grid of text editable by you at any time. The changes you make to the page are not saved unless you use the tile storage feature. This version is oriented towards scripters who wish to learn.
+		</p>
+		<p>OfflineOWOT does not support other worlds and has a very poor account system.
+			They all start off blank. But, that is all you need to start scripting.</p>
+		<p>
+			This is an extension of FP's <a href="https://ourworldoftext.com/static?file=25">OfflineOWOT V3</a><br></p>
+		<p>Contact Creator on <a href="https://discord.gg/9buMtUt">OWOT Discord</a>
+(realredtext#1254)</p>
+	</div>
+
+				</div>
+				<div class="span-5 last">
+					&nbsp;
+				</div>
+			</div>
+		</div>
+		
+		
+		<script>
+			function addCollapsableEvent(title, cont) {
+				title.onclick = function() {
+					var disp = cont.style.display;
+					if(disp == "none") {
+						cont.style.display = "";
+					} else {
+						cont.style.display = "none";
+					}
+				}
+			}
+			function makeCollapsableSections() {
+				var sections = document.getElementsByClassName("content_set");
+				for(var i = 0; i < sections.length; i++) {
+					var sect = sections[i];
+					var titles = sect.getElementsByClassName("content_set_title");
+					var conts = sect.getElementsByClassName("content_set_content");
+					if(!titles.length || !conts.length) continue;
+					var title = titles[0];
+					var cont = conts[0];
+					addCollapsableEvent(title, cont);
+				}
+			}
+			makeCollapsableSections();
+		</script>
+        <script>
+        //the permission handling (if only HTML supported {% these tags %} >:(
+        const topBar = document.getElementById("topbar");
+        if(state.userModel.is_superuser) {
+            var panelSpan = document.createElement("span");
+            panelSpan.innerHTML = " | <a href=\"administrator.html\">Admin Panel (WIP)</a>"
+            topBar.appendChild(panelSpan);
+        };
+        if(state.userModel.is_staff) {
+            var managerSpan = document.createElement("span");
+            managerSpan.innerHTML = " | <a href=\"script_manager.html\">Script Manager (WIP)</a>";
+            topBar.appendChild(managerSpan);
+        };
+        </script>
+	
+</body></html>
