@@ -23,7 +23,7 @@ var state = {
         "chat_permission":0,
         "color_text":0
     },
-    "announcement": localStorage.getItem("announcement") || undefined;
+    "announcement": localStorage.getItem("announcement") || undefined
 
 };
 //fixing permissions
