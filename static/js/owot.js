@@ -1615,6 +1615,9 @@ function wipeViews() {
 
 // begin OWOT's client
 function begin() {
+    if(state.announcement) {
+        w.doAnnounce(state.announcement);
+    };
     viewCount++;
     localStorage.setItem("views", viewCount+"");
     if(Debug) {
