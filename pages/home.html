@@ -7,17 +7,16 @@
 		<link rel="stylesheet" type="text/css" href="../static/css/site.css">
 		<link rel="shortcut icon" href="../static/favicon.png">
         <script src="../static/js/state.js"></script>
+        <script src="../static/alpine.js"></script>
 	</head>
 	<body>
 		<div class="container">
 			<div class="span-19">
-				<div id="topbar" class="span-19 last">
-					
-						
-							Logged in as fp:
-						
-					
+				<div id="topbar" class="span-19 last">	
+                    Logged in as <span x-text="state.userModel.username"></span>:
 					<a href="home.html">Home</a>
+                    <template x-if="state.userModel.is_superuser"><span> | <a href="administrator.html">Admin Panel</a></span></template>
+                    <template x-if="state.userModel.is_staff"><span> | <a href="script_manager.html">Script Manager</a></span></template>
 				</div>
 
 				<div class="span-19 last">
@@ -74,19 +73,4 @@
 			}
 			makeCollapsableSections();
 		</script>
-        <script>
-        //the permission handling (if only HTML supported {% these tags %} >:(
-        const topBar = document.getElementById("topbar");
-        if(state.userModel.is_superuser) {
-            var panelSpan = document.createElement("span");
-            panelSpan.innerHTML = " | <a href=\"administrator.html\">Admin Panel</a>"
-            topBar.appendChild(panelSpan);
-        };
-        if(state.userModel.is_staff) {
-            var managerSpan = document.createElement("span");
-            managerSpan.innerHTML = " | <a href=\"script_manager.html\">Script Manager (WIP)</a>";
-            topBar.appendChild(managerSpan);
-        };
-        </script>
-	
 </body></html>
