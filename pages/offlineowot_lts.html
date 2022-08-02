@@ -7,6 +7,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link type="text/css" rel="stylesheet" href="../static/css/yourworld.css">
         <link type="text/css" rel="stylesheet" href="../static/css/filepicker.css">
+        <script src="../static/alpine.js"></script>
     </head>
     <body>
         <div id="main_view">
@@ -202,9 +203,11 @@
         <script src="../static/js/permissions.js"></script>
         <script src="../static/js/chat.js"></script>
         <script src="../static/js/owot.js"></script>
+        <template x-if="USER_LEVEL >= 2">
         <script src="../static/js/world_tools.js"></script>
-        <script src="../static/js/world_importexport.js"></script>
         <script src="../static/js/tile_lock.js"></script>
-	<script src="../static/js/search_util.js"></script>
+        <script src="../static/js/search_util.js"></script>
+        </template>
+        <script src="../static/js/world_importexport.js"></script>
     </body>
 </html>
