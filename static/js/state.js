@@ -21,7 +21,8 @@ var state = {
         "feature_coord_link":0,
         "pathname":"",
         "chat_permission":0,
-        "color_text":0
+        "color_text":0,
+        "write_interval": 1000
     },
     "announcement": localStorage.getItem("announcement") || undefined
 
