@@ -2018,7 +2018,7 @@ var writeInterval = setInterval(function() {
     } catch(e) {
         console.log(e);
     }
-}, 1000);
+}, state.worldModel.write_interval);
 
 window.onbeforeunload = function() {
     if(writeBuffer.length) flushWrites();
