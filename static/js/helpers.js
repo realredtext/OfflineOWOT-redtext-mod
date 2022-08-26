@@ -201,6 +201,9 @@ function ReconnectingWebSocket(url) {
         }
     }
     connect();
+    this.monitor = this.socket.loadMonitor;
+    this.closeMonitor = this.monitor.close;
+    this.reconnectMonitor = this.monitor.reconnect;
     this.send = function(data) {
         this.socket.send(data);
     }
@@ -213,7 +216,6 @@ function ReconnectingWebSocket(url) {
     }
     return this;
 }
-
 var surrogateRegexStr = "([\\uD800-\\uDBFF][\\uDC00-\\uDFFF])";
 var surrogateRegex = new RegExp(surrogateRegexStr, "g");
 var combiningRegexStr = "(([\\0-\\u02FF\\u0370-\\u1DBF\\u1E00-\\u20CF\\u2100-\\uD7FF\\uDC00-\\uFE1F\\uFE30-\\uFFFF]|[\\uD800-\\uDBFF][\\uDC00-\\uDFFF]|[\\uD800-\\uDBFF])([\\u0300-\\u036F\\u1DC0-\\u1DFF\\u20D0-\\u20FF\\uFE20-\\uFE2F]+))";
