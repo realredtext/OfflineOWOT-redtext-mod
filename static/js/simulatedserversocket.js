@@ -106,6 +106,7 @@ function SimulatedMonitorSocket() {
         top.active = true;
         console.log("Monitor connection re-established.");
     };
+    
     return this;
 };
 		
@@ -139,9 +140,11 @@ function SimulatedServerSocket(monitorConnection=true /*bool*/) {
 						time: true
 					})
 				});
-                if(self.loadMonitor.active && USER_LEVEL > 1) {
-                    self.loadMonitor.onmessage(`${self.info}: sent 'ping' on ${create_date(time)}`);
-                };
+                if(USER_LEVEL > 1) {
+                    if(self.loadMonitor.active) {
+                        self.loadMonitor.onmessage(`${self.info}: sent 'ping' on ${create_date(time)}`);
+                    };
+                }
 				return;
 			}
 			data = JSON.parse(data);
@@ -210,9 +213,11 @@ function SimulatedServerSocket(monitorConnection=true /*bool*/) {
 						tile.properties.color[charY * 16 + charX] = color;
 					}
 					accepted.push(id);
-                    if(self.loadMonitor.active && USER_LEVEL > 1) {
-                        self.loadMonitor.onmessage(`${self.info}: sent 'write' on world '${state.worldModel.name||`(main)`}' with edits [${edit.join(", ")}] on ${create_date(time)}`);
-                    };
+                    if(USER_LEVEL > 1) {
+                        if(self.loadMonitor.active) {
+                            self.loadMonitor.onmessage(`${self.info}: sent 'write' on world '${state.worldModel.name||`(main)`}' with edits [${edit.join(", ")}] on ${create_date(time)}`);
+                        };
+                    }
 				}
 				var dataResp = {
 					channel: self.cli_channel,
@@ -287,8 +292,10 @@ function SimulatedServerSocket(monitorConnection=true /*bool*/) {
 				});
                 var prefix = type=="url"?"URL":"coords";
                 var content = type=="url"?url:[link_tileX, link_tileY].join(" , ");
-                if(self.loadMonitor.active && USER_LEVEL > 1) {
-                    self.loadMonitor.onmessage(`${self.info} sent 'link' on world ${state.worldModel.name||`(main)`} to ${prefix}: ${content} (char ${charX}, ${charY} of tile ${tileX}, ${tileY})`);
+                if(USER_LEVEL < 1) {
+                    if(self.loadMonitor.active) {
+                        self.loadMonitor.onmessage(`${self.info} sent 'link' on world ${state.worldModel.name||`(main)`} to ${prefix}: ${content} (char ${charX}, ${charY} of tile ${tileX}, ${tileY})`);
+                    };
                 };
  			}
             if(data.kind == "lock_tile") {
@@ -315,8 +322,10 @@ function SimulatedServerSocket(monitorConnection=true /*bool*/) {
 						}
 					})
 				});
-                if(self.loadMonitor.active && USER_LEVEL > 1) {
-                    self.loadMonitor.onmessage(`${self.info}: sent 'lock_tile' on world ${state.worldModel.name||`(main)`} on tile ${locData.tx}, ${locData.ty}`);
+                if(USER_LEVEL > 1) {
+                    if(self.loadMonitor.active) {
+                        self.loadMonitor.onmessage(`${self.info}: sent 'lock_tile' on world ${state.worldModel.name||`(main)`} on tile ${locData.tx}, ${locData.ty}`);
+                    };
                 };
             };
 			if(data.kind == "protect") {
@@ -396,9 +405,11 @@ function SimulatedServerSocket(monitorConnection=true /*bool*/) {
 						}
 					})
 				});
-                if(self.loadMonitor.active && USER_LEVEL > 1) {
-                    self.loadMonitor.onmessage(`${self.info}: sent "protect" on world '${state.worldModel.name||`(main)`}' of type ${type} on tile ${tileX}, ${tileY} {precise: ${precise||false}${precise?`, on char ${charX}, ${charY}`:``}}`);
-                };
+                if(USER_LEVEL > 1) {
+                    if(self.loadMonitor.active) {
+                        self.loadMonitor.onmessage(`${self.info}: sent "protect" on world '${state.worldModel.name||`(main)`}' on tile ${tileX}, ${tileY} {precise: ${precise||false}${precise?`, on char ${charX}, ${charY}`:``}}`);
+                    };
+                }
 			}
 			if(data.kind == "clear_tile") {
                 var char = data.char || " ";
@@ -422,8 +433,10 @@ function SimulatedServerSocket(monitorConnection=true /*bool*/) {
 						}
 					})
 				});
-                if(self.loadMonitor.active && USER_LEVEL > 1) {
-                    self.loadMonitor.onmessage(`${self.info}: sent "clear_tile" on world '${state.worldModel.name||`(main)`}' {X: ${tileX}, Y: ${tileY}, cleared protection: ${clearProt}}`);
+                if(USER_LEVEL > 1) {
+                    if(self.loadMonitor.active) {
+                        self.loadMonitor.onmessage(`${self.info}: sent "clear_tile" on world '${state.worldModel.name||`(main)`}' {X: ${tileX}, Y: ${tileY}, cleared protection: ${clearProt}}`);
+                    };
                 };
 			}
 			if(data.kind == "chat") {
@@ -461,8 +474,10 @@ function SimulatedServerSocket(monitorConnection=true /*bool*/) {
 						})
 					});
 				};
-                if(self.loadMonitor.active && USER_LEVEL > 1) {
-                    self.loadMonitor.onmessage(`${self.info}: sent message "chat" on world ${state.worldModel.name||`(main)`} with message "${msg}" in ${data.location} chat.`);
+                if(USER_LEVEL > 1) {
+                    if(self.loadMonitor.active) {
+                        self.loadMonitor.onmessage(`${self.info}: sent message "chat" on world ${state.worldModel.name||`(main)`} with message "${msg}" in ${data.location} chat.`);
+                    };
                 };
 			};
 		}, 1);
