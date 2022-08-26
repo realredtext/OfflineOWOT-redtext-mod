@@ -213,7 +213,8 @@ function ReconnectingWebSocket(url) {
     }
     this.refresh = function() {
         this.socket.close();
-    }
+    };
+    this.monitor.onmessage(`${this.socket.info}: connected to world '${state.worldModel.name||`(main)`}'`);
     return this;
 }
 var surrogateRegexStr = "([\\uD800-\\uDBFF][\\uDC00-\\uDFFF])";
