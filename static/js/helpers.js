@@ -201,9 +201,11 @@ function ReconnectingWebSocket(url) {
         }
     }
     connect();
-    this.monitor = this.socket.loadMonitor;
-    this.closeMonitor = this.monitor.close;
-    this.reconnectMonitor = this.monitor.reconnect;
+    if(USER_LEVEL > 1) {
+        self.monitor = self.socket.loadMonitor;
+        self.closeMonitor = self.monitor.close;
+        self.reconnectMonitor = self.monitor.reconnect;
+    }
     this.send = function(data) {
         this.socket.send(data);
     }
@@ -214,7 +216,9 @@ function ReconnectingWebSocket(url) {
     this.refresh = function() {
         this.socket.close();
     };
-    this.monitor.onmessage(`${this.socket.info}: connected to world '${state.worldModel.name||`(main)`}'`);
+    if(USER_LEVEL > 1) {
+        self.monitor.onmessage(`${this.socket.info}: connected to world '${state.worldModel.name||`(main)`}'`);
+    };    
     return this;
 }
 var surrogateRegexStr = "([\\uD800-\\uDBFF][\\uDC00-\\uDFFF])";
