@@ -80,12 +80,38 @@ function uptime(custom_ms_ago) {
 		}
 	}
 	return milliseconds_ago + " " + _data + extra;
-}
+};
+
+function SimulatedMonitorSocket() {
+    if(USER_LEVEL < 2) return;
+    var top = this;
+    this.active = true;
+    this.onmessage = (string) => {
+        console.log(string);
+    };
+    
+    this.close = () => {
+        top.onmessage = undefined;
+        top.active = false;
+        console.log("Monitor connection has been closed.");
+    };
+    this.onconnect = () => {
+        console.log("Monitor connection established.");
+    };
+    this.onconnect();
+    this.reconnect = () => {
+        top.onmessage = (string) => {
+            console.log(string);
+        };
+        top.active = true;
+        console.log("Monitor connection re-established.");
+    };
+};
 		
 // (EXT)
 var tile_database = {};
 
-function SimulatedServerSocket() {
+function SimulatedServerSocket(monitorConnection=true /*bool*/) {
 	var self = this;
 	this.cli_id = Math.floor(Math.random() * 10000);
 	this.cli_channel = "";
@@ -93,9 +119,18 @@ function SimulatedServerSocket() {
 	for(var i = 0; i < 14; i++) {
 		this.cli_channel += "0123456789abcdef"[Math.floor(Math.random() * 16)];
 	};
+    this.info = `[${self.cli_channel}, ${self.cli_id}]`
+    if(USER_LEVEL > 1 && monitorConnection) {
+        self.loadMonitor = new SimulatedMonitorSocket();
+        self.loadMonitor.onmessage = (data) => {console.log(data)};
+    };
+    this.closeMonitorConn = () => {
+        self.loadMonitor.close();
+    };
 	this.send = function(data) {
 		setTimeout(function() {
 			if(data == "2::@") {
+                var time = Date.now();
 				self.onmessage({
 					data: JSON.stringify({
 						kind: "ping",
@@ -103,6 +138,9 @@ function SimulatedServerSocket() {
 						time: true
 					})
 				});
+                if(self.loadMonitor.active) {
+                    self.loadMonitor.onmessage(`${self.info}: sent 'ping' on ${create_date(time)}`);
+                };
 				return;
 			}
 			data = JSON.parse(data);
@@ -171,6 +209,9 @@ function SimulatedServerSocket() {
 						tile.properties.color[charY * 16 + charX] = color;
 					}
 					accepted.push(id);
+                    if(self.loadMonitor.active) {
+                        self.loadMonitor.onmessage(`${self.info}: sent 'write' on world '${state.worldModel.name||`(main)`}' with edits [${edit.join(", ")}] on ${create_date(time)}`);
+                    };
 				}
 				var dataResp = {
 					channel: self.cli_channel,
@@ -243,7 +284,12 @@ function SimulatedServerSocket() {
 						}
 					})
 				});
-			}
+                var prefix = type=="url"?"URL":"coords";
+                var content = type=="url"?url:[link_tileX, link_tileY].join(" , ");
+                if(self.loadMonitor.active) {
+                    self.loadMonitor.onmessage(`${self.info} sent 'link' on world ${state.worldModel.name||`(main)`} to ${prefix}: ${content} (char ${charX}, ${charY} of tile ${tileX}, ${tileY})`);
+                };
+ 			}
             if(data.kind == "lock_tile") {
                 const locData = {
                     ty: data.tileY,
@@ -268,6 +314,9 @@ function SimulatedServerSocket() {
 						}
 					})
 				});
+                if(self.loadMonitor.active) {
+                    self.loadMonitor.onmessage(`${self.info}: sent 'lock_tile' on world ${state.worldModel.name||`(main)`} on tile ${locData.tx}, ${locData.ty}`);
+                };
             };
 			if(data.kind == "protect") {
 				var pdata = data.data;
@@ -327,7 +376,7 @@ function SimulatedServerSocket() {
                         let memberPerms = WORLD_LEVEL >= 1 || USER_LEVEL >= 1;
 						if(type == "owner-only" && ownerPerms) {
 							tile.properties.writability = 2;
-						} else if(type == "member-only" && memberPerms) {
+						} else if(type == "member-only" && memberPerms && (tile.properties.writability !== 2 || tile.properties.writability !== -1)) {
 							tile.properties.writability = 1;
 						} else if(type == "public") {
 							tile.properties.writability = 0;
@@ -346,8 +395,12 @@ function SimulatedServerSocket() {
 						}
 					})
 				});
+                if(self.loadMonitor.active) {
+                    self.loadMonitor.onmessage(`${self.info}: sent "protect" on world '${state.worldModel.name||`(main)`}' on tile ${tileX}, ${tileY} {precise: ${precise||false}${precise?`, on char ${charX}, ${charY}`:``}}`);
+                };
 			}
 			if(data.kind == "clear_tile") {
+                var char = data.char || " ";
                 var clearProt = data.clearProt;
                 var canClear = USER_LEVEL >= 2 || WORLD_LEVEL == 2;
                 if(!canClear) return;
@@ -357,7 +410,7 @@ function SimulatedServerSocket() {
 				if(!tile) return;
                 if(tile.properties.writability === -1) return;
                 if(clearProt) tile.properties.writability = 0;
-				tile.content = " ".repeat(128);
+				tile.content = char.repeat(128);
 				tile.properties.cell_props = {};
 				self.onmessage({
 					data: JSON.stringify({
@@ -368,6 +421,9 @@ function SimulatedServerSocket() {
 						}
 					})
 				});
+                if(self.loadMonitor.active) {
+                    self.loadMonitor.onmessage(`${self.info}: sent "clear_tile" on world '${state.worldModel.name||`(main)`}' {X: ${tileX}, Y: ${tileY}, cleared protection: ${clearProt}}`);
+                };
 			}
 			if(data.kind == "chat") {
 				var msg = data.message;
@@ -403,8 +459,11 @@ function SimulatedServerSocket() {
 							kind: "chat"
 						})
 					});
-				}
-			}
+				};
+                if(self.loadMonitor.active) {
+                    self.loadMonitor.onmessage(`${self.info}: sent message "chat" on world ${state.worldModel.name||`(main)`} with message "${msg}" in ${data.location} chat.`);
+                };
+			};
 		}, 1);
 	}
 	this.close = function() {
@@ -423,4 +482,4 @@ function SimulatedServerSocket() {
 		});
 	}, 1);
 	return this;
-}
+};
