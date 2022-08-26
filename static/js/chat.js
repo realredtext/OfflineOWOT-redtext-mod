@@ -150,6 +150,18 @@ var simulatedServerCommands = {
     uptime: () => {
         serverChatResponse(`Server uptime: ${uptime()}`);
     },
+    monitor: ([value]) => {
+        const values = {"on": true, "off": false};
+        if(!value in values) return serverChatResponse("Type is not \"on\" or \"off\"!");
+        if(value == "on" && !socket.monitor.active) {
+            socket.reconnectMonitor();
+            serverChatResponse("Connected to load monitor.");
+        } else if(value == "off" && socket.monitor.active) {
+            socket.closeMonitor();
+            serverChatResponse("Disconnected from load monitor.");
+        };
+        
+    }
     mute: (args) => {
         let canMute = USER_LEVEL !== 0 || WORLD_LEVEL === 2;
         if(!canMute) return;
