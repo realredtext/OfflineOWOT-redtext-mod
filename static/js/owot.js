@@ -2483,6 +2483,7 @@ function stopPasting() {
     clearInterval(pasteInterval);
     write_busy = false;
 }
+//im gay
 
 var autoArrowKeyMoveInterval = null;
 var autoArrowKeyMoveActive = false;
