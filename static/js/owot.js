@@ -4523,7 +4523,7 @@ var lastTileHover = null;
 
 Object.assign(w, {
     userCount: -1,
-    clientId: socket.socket.client_id,
+    clientId: -1,
     net: network,
     isLinking: false,
     isProtecting: false,
