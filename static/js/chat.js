@@ -143,7 +143,7 @@ var simulatedServerCommands = {
         let wlCaption = WORLD_LEVEL==2?"(Owner)":WORLD_LEVEL==1?"(Member)":"(Public)";
         let wlStr = `${WORLD_LEVEL} ${wlCaption}`
         
-        let list = [`Username: <b style="color: ${int_to_hexcode(localStorage.getItem("chatcolor")*1)}">${user.username}</b>`, `Nickname: ${yw.Nickname}`, `Level: ${levelStr}`, `World level: ${wlStr}`, `ID: ${w.clientId}`];
+        let list = [`Username: <b style="color: ${int_to_hexcode(localStorage.getItem("chatcolor")*1)}">${user.username}</b>`, `Nickname: ${yw.Nickname}`, `Level: ${levelStr}`, `World level: ${wlStr}`, `ID: ${socket.socket.cli_id}`];
         
         serverChatResponse(`Who am I:<br>${list.join("<br>&emsp;")}`)
     },
