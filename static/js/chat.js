@@ -91,7 +91,7 @@ function api_chat_send(message, opts) {
             simulatedServerCommands[command](args);
             return;
         }
-        if(!simulatedServerCommands[command] && !client_commands[command]) {
+        if(!simulatedServerCommands[command] && !client_commands[command] && command != "help") {
                 serverChatResponse(`Invalid command: /${command}`);
                 return;
             }
@@ -194,6 +194,10 @@ var simulatedServerCommands = {
         if(!(USER_LEVEL >= 2)) return;
         serverChatResponse("Currently loaded worlds (top 1000):<br><div style=\"background-color: #DADADA\"><span style=\"font-family: monospace; font-size: 13px\">-> (main) [1]</span></div>")
     }
+};
+
+var SSCDescriptions = {
+
 }
             
 var client_commands = {
