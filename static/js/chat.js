@@ -87,11 +87,11 @@ function api_chat_send(message, opts) {
             client_commands[command](args);
             return;
         };
-        if(simulatedServerCommands[command]) {
+        if(simulatedServerCommands[command] && USER_LEVEL >= commandPermissions[command]) {
             simulatedServerCommands[command](args);
             return;
         }
-        if(!simulatedServerCommands[command] && !client_commands[command] && command != "help") {
+        if((!simulatedServerCommands[command] && !client_commands[command] && command != "help") || USER_LEVEL < commandPermissions[command]) {
                 serverChatResponse(`Invalid command: /${command}`);
                 return;
             }
@@ -139,7 +139,7 @@ var commandPermissions = {
     
 var commandDescriptions = {
     channel: "Check the channel of the chat field you are in",
-    stats: "Check the viewcount and creation date of a world",
+    stats: "Check the view count and creation date of a world",
     whoami: "Check your nickname, username, id, and permissions",
     uptime: "Check the uptime of the server",
     monitor: "Connect or disconnect from the simulated load monitor in the console (on/off)",
@@ -159,12 +159,11 @@ var commandDescriptions = {
 
 var simulatedServerCommands = {
     channel: (args) => {
-        if(!USER_LEVEL) return;
         let dataArr = [`Found 1 channel(s) for this world.`, `<b>Name:</b> ${selectedChatTab==0?"_":"global"}`, `<b>Desc:</b> ${selectedChatTab==0?"Front page channel":"The global channel - Users can access this channel from any page on OWOT"}`, `<b>Created:</b> (UTC) March 24, 2021, 1:32:11 PM`, "----------------", `<b>Default channel id:</b> ${selectedChatTab==0?"2":html_tag_esc("<none>")}`]
         serverChatResponse(dataArr.join("<br>"))
     },
     stats: () => {
-        serverChatResponse(`Stats for world<br>Creation date: (UTC) March 15 2021, 1:32:11 PM<br>View count: ${viewCount}`);
+        serverChatResponse(`Stats for world<br>Creation date: (Local time) ${state.creation_date}<br>View count: ${viewCount}`);
     },
     whoami: () => {
         let user = state.userModel;
