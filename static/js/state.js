@@ -1,13 +1,13 @@
 //this is the permission shit, feel free to mod
 var state = {
     "userModel": {
-        "username":"fp",
-        "is_superuser":true,
+        "username":"realredtext",
         "authenticated":true,
-        "is_member":true,
-        "is_owner":true,
+        "is_operator":true,
+        "is_superuser":true,
         "is_staff":true,
-        "is_operator":true
+        "is_owner":true,
+        "is_member":true
     },
     "worldModel": { 
         "feature_membertiles_addremove":true,
@@ -24,9 +24,10 @@ var state = {
         "color_text":0,
         "write_interval": 1000
     },
-    "announcement": localStorage.getItem("announcement") || undefined
-
+    "announcement": localStorage.getItem("announcement") || undefined,
+    "creation_date": Date(Date.now()).slice(0, 24)
 };
+
 //fixing permissions
 if(state.userModel.is_operator) {
     state.userModel.is_superuser = true;
