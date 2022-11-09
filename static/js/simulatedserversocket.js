@@ -441,45 +441,27 @@ function SimulatedServerSocket(monitorConnection=true /*bool*/) {
 			}
 			if(data.kind == "chat") {
 				var msg = data.message;
-				if(msg == "/help") {
-					self.onmessage({
-						data: JSON.stringify({
-							nickname: "[ Server ]",
-							realUsername: "[ Server ]",
-							id: 0,
-							message: `Commands:<br>${Object.keys(client_commands).join("<br>")}`,
-							registered: true,
-							location: data.location,
-							op: 1,
-							admin: 1,
-							staff: 1,
-							color: "",
-							kind: "chat"
-						})
-					});
-				} else {
-					self.onmessage({
-						data: JSON.stringify({
-							nickname: data.nickname,
-							realUsername: data.realUsername || state.userModel.username,
-							id: self.cli_id || data.id,
-							message: data.message,
-							registered: true,
-							location: data.location,
-							op: data.op || USER_LEVEL === 3,
-							admin: data.admin || USER_LEVEL === 2 || USER_LEVEL === 3,
-							staff: data.staff || USER_LEVEL === 1 || USER_LEVEL === 2 || USER_LEVEL === 3,
-							color: data.color,
-							kind: "chat"
-						})
-					});
-				};
+				self.onmessage({
+					data: JSON.stringify({
+						nickname: data.nickname,
+						realUsername: data.realUsername || state.userModel.username,
+						id: self.cli_id || data.id,
+						message: data.message,
+						registered: true,
+						location: data.location,
+						op: data.op || USER_LEVEL === 3,
+						admin: data.admin || USER_LEVEL === 2 || USER_LEVEL === 3,
+						staff: data.staff || USER_LEVEL === 1 || USER_LEVEL === 2 || USER_LEVEL === 3,
+						color: data.color,
+						kind: "chat"
+					})
+				});
+			};
                 if(USER_LEVEL > 1) {
                     if(self.loadMonitor.active) {
                         self.loadMonitor.onmessage(`${self.info}: sent message "chat" on world ${state.worldModel.name||`(main)`} with message "${msg}" in ${data.location} chat.`);
                     };
                 };
-			};
 		}, 1);
 	}
 	this.close = function() {
