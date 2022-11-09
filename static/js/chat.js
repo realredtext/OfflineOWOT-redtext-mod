@@ -125,6 +125,38 @@ function serverChatResponse(msg, html=true) {
 
 var muteList = [];
 
+var commandPermissions = {
+    channel: 1,
+    stats: 0,
+    whoami: 0,
+    uptime: 3,
+    monitor: 2,
+    mute: 1,
+    clearmutes: 1,
+    worlds: 2,
+    help: 1
+};
+    
+var commandDescriptions = {
+    channel: "Check the channel of the chat field you are in",
+    stats: "Check the viewcount and creation date of a world",
+    whoami: "Check your nickname, username, id, and permissions",
+    uptime: "Check the uptime of the server",
+    monitor: "Connect or disconnect from the simulated load monitor in the console (on/off)",
+    mute: "Silence a user for a finite time (id, seconds)",
+    clearmutes: "Clears all mutes",
+    worlds: "Check the activity of the 1000 most viewed worlds",
+    help: "Gives a list of available commands and their usage",
+    nick: "Change your chat nickname (nick (no nick will set your nick to your username))",
+    ping: "Check your connection time to the server",
+    gridsize: "Change the size of characters (width x height)",
+    color: "Set your canvas color (any hex color)",
+    chatcolor: "Set your name's color in chat (any hex color)",
+    warp: "Warp to a world you can visit (/worldname)",
+    warpserver: "Change the wss address your socket is connected to (wss://somewhere.somethingsomething.com/ws/)",
+    night: "Turn on night mode on the canvas"
+};
+
 var simulatedServerCommands = {
     channel: (args) => {
         if(!USER_LEVEL) return;
@@ -161,7 +193,7 @@ var simulatedServerCommands = {
             serverChatResponse("Disconnected from load monitor.");
         };
         
-    }
+    },
     mute: (args) => {
         let canMute = USER_LEVEL !== 0 || WORLD_LEVEL === 2;
         if(!canMute) return;
@@ -193,12 +225,24 @@ var simulatedServerCommands = {
     worlds: (args) => {
         if(!(USER_LEVEL >= 2)) return;
         serverChatResponse("Currently loaded worlds (top 1000):<br><div style=\"background-color: #DADADA\"><span style=\"font-family: monospace; font-size: 13px\">-> (main) [1]</span></div>")
+    },
+    help: () => {
+        var availableCommands = [];
+        for(var i in commandDescriptions) {
+            if(USER_LEVEL >= commandPermissions[i] || commandPermissions[i] == undefined) {
+                availableCommands.push(i);
+            };
+        };
+        
+        var commandStrings = [];
+        for(var i of availableCommands) {
+            commandStrings.push(`<b>${i}</b>: ${commandDescriptions[i]}`);
+        };
+        
+        serverChatResponse(commandStrings.join("<br><br>"));
     }
 };
 
-var SSCDescriptions = {
-
-}
             
 var client_commands = {
     nick: function (args) {
