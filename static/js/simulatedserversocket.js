@@ -24,6 +24,9 @@ function setWorldLevel(value /*owner: 2, member: 1, public: 0*/) {
     let levelCaption = WORLD_LEVEL==2?"Owner":WORLD_LEVEL==1?"Member":"Public";
     return `World permission set to ${value} (${levelCaption})`;
 };
+
+var editLengthLimit = 512;
+var superuserELL = 1280;
             
 var start_time = Date.now();
 var _time_ago = ["millisecond", "second", "minute", "hour", "day", "month", "year"];
@@ -174,6 +177,7 @@ function SimulatedServerSocket(monitorConnection=true /*bool*/) {
 			}
 			if(data.kind == "write") {
 				var edits = data.edits;
+				if((edits.length > editLengthLimit && USER_LEVEL == 0) || (edits.length > superuserELL && USER_LEVEL >= 2)) return;
 				var editedTiles = {};
 				var accepted = [];
 				for(var i = 0; i < edits.length; i++) {
