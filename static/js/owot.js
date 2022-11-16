@@ -4135,7 +4135,7 @@ function buildMenu() {
     w.menu = menu;
     menu.addEntry("<span onclick=window.open(\"home.html\")>More...</span> <img src=\"../static/external_link.png\"/>")
 	menu.addOption("About...", function() {
-		alert("OfflineOWOT Build 3 Redtext build\n=================\nThis is a single-page client that simulates the OWOT server. Changes do not save when you refresh unless you export your world.");
+		alert("OfflineOWOT Build 3 Redtext build\n=================\nThis is a single-page client that simulates the OWOT server. Changes do not save when you refresh unless you export your world.\nOriginal by FP on https://ourworldoftext.com/static?file=25");
 	});
     menu.addCheckboxOption(" Show coordinates", function() {
         return elm.coords.style.display = "";
