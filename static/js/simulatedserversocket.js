@@ -163,6 +163,9 @@ function SimulatedServerSocket(monitorConnection=true /*bool*/) {
 					var y1 = rect.minY;
 					var x2 = rect.maxX;
 					var y2 = rect.maxY;
+                    			var yLength = y2 - y1;
+                    			var xLength = x2 - x1;
+                    			if(xLength * yLength >= 100000) return; //no lag here
 					for(var y = y1; y <= y2; y++) {
 						for(var x = x1; x <= x2; x++) {
 							var tile = tile_database[`${y},${x}`];
