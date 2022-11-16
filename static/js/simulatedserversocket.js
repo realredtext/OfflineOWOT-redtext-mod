@@ -27,6 +27,9 @@ function setWorldLevel(value /*owner: 2, member: 1, public: 0*/) {
 
 var editLengthLimit = 512;
 var superuserELL = 1280;
+
+var lastChatDate = Date.now();
+var lastChatID = null;
             
 var start_time = Date.now();
 var _time_ago = ["millisecond", "second", "minute", "hour", "day", "month", "year"];
@@ -448,18 +451,26 @@ function SimulatedServerSocket(monitorConnection=true /*bool*/) {
 			}
 			if(data.kind == "chat") {
 				var msg = data.message;
+				var time = Date.now();
+				if(USER_LEVEL < 1 && (lastChatID === self.cli_id && lastChatDate - time <= 500)) {
+					serverChatResponse("You are chatting too fast");
+					return;
+				};
+				lastChatID = self.cli_id;
+				lastChatDate = time;
 				self.onmessage({
 					data: JSON.stringify({
 						nickname: data.nickname,
-						realUsername: data.realUsername || state.userModel.username,
-						id: self.cli_id || data.id,
+						realUsername: state.userModel.username,
+						id: self.cli_id,
 						message: data.message,
-						registered: true,
+						registered: state.userModel.authenticated,
 						location: data.location,
-						op: data.op || USER_LEVEL === 3,
-						admin: data.admin || USER_LEVEL === 2 || USER_LEVEL === 3,
-						staff: data.staff || USER_LEVEL === 1 || USER_LEVEL === 2 || USER_LEVEL === 3,
+						op: USER_LEVEL === 3,
+						admin: USER_LEVEL >= 2,
+						staff: USER_LEVEL >= 1,
 						color: data.color,
+						date: time,
 						kind: "chat"
 					})
 				});
