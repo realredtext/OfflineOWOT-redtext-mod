@@ -177,7 +177,7 @@ function SimulatedServerSocket(monitorConnection=true /*bool*/) {
 			}
 			if(data.kind == "write") {
 				var edits = data.edits;
-				if((edits.length > editLengthLimit && USER_LEVEL == 0) || (edits.length > superuserELL && USER_LEVEL >= 2)) return;
+                		if(((edits.length > editLengthLimit) && USER_LEVEL < 2) || ((edits.length > superuserELL) && USER_LEVEL >= 2)) return;
 				var editedTiles = {};
 				var accepted = [];
 				for(var i = 0; i < edits.length; i++) {
