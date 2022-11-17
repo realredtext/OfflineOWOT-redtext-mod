@@ -452,8 +452,11 @@ function SimulatedServerSocket(monitorConnection=true /*bool*/) {
 			if(data.kind == "chat") {
 				var msg = data.message;
 				var time = Date.now();
-				if(USER_LEVEL < 1 && (lastChatID === self.cli_id && lastChatDate - time <= 500)) {
+                var isSpamming = (time - lastChatDate <= 500) && self.cli_id == lastChatID;
+				if(isSpamming && USER_LEVEL == 0) {
 					serverChatResponse("You are chatting too fast");
+                    lastChatDate = time;
+                    lastChatID = self.cli_id;
 					return;
 				};
 				lastChatID = self.cli_id;
