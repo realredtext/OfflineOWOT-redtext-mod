@@ -37,7 +37,7 @@ defineElements({ // elm[<name>]
 });
 
 if(!USER_LEVEL) {
-    elm.chatbar.maxLength = 2000
+    elm.chatbar.maxLength = 400
 }
 
 var canChat = Permissions.can_chat(state.userModel, state.worldModel);
@@ -56,7 +56,7 @@ function api_chat_send(message, opts) {
     var nick = opts.nick || YourWorld.Nickname;
     var location = opts.location ? opts.location : (selectedChatTab == 0 ? "page" : "global");
 
-    var msgLim = USER_LEVEL >= 1 ? Infinity : 2000;
+    var msgLim = USER_LEVEL >= 1 ? 3030 : 400;
 
     message = message.trim();
     if(!message.length) return;
