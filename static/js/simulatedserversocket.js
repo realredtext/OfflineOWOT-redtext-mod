@@ -461,6 +461,12 @@ function SimulatedServerSocket(monitorConnection=true /*bool*/) {
 				};
 				lastChatID = self.cli_id;
 				lastChatDate = time;
+                
+                if(USER_LEVEL == 0) {
+                    msg = msg.substring(0, 400);
+                } else {
+                    msg = msg.substring(0, 4000);
+                }
 				self.onmessage({
 					data: JSON.stringify({
 						nickname: data.nickname,
