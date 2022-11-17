@@ -1,7 +1,7 @@
 //this is the permission shit, feel free to mod
 var state = {
     "userModel": {
-        "username":"realredtext",
+        "username":location.search || "realredtext",
         "authenticated":true,
         "is_operator":true,
         "is_superuser":true,
