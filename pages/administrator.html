@@ -8,15 +8,14 @@
 	    <link rel="stylesheet" type="text/css" href="../static/css/autocomplete.css">	
         <script src="../static/js/state.js"></script>
 	<script>
-		var userDescription = state.userModel.is_operator?"(operator)":state.userModel.is_superuser?"(superuser)":state.userModel.is_staff?"(staff)";
-	</script>
+    var userDescription = state.userModel.is_operator?"(operator)":state.userModel.is_superuser?"(superuser)"?state.userModel.is_staff:"(staff)":"";    </script>
 	</head>
 	<body>
 		<div class="container">
 			<div class="span-19">
 				<div id="topbar" class="span-19 last">
 					
-					Logged in as <template x-text="state.userModel.username"></template>:
+					Logged in as <span x-text="state.userModel.username"></span>:
 						
 					
 					<a href="home.html">Home</a>
@@ -39,7 +38,7 @@
 		<div class="content_set_content">
 			<ul>
 				<li>
-					<template x-text="state.userModel.username"></template>
+					<span x-text="state.userModel.username"></span>
 
 					<template x-text="userDescription"></template>
 						<a href="./administrator_edit_user.html">configure</a>
