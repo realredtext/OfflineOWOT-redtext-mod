@@ -483,12 +483,13 @@ function SimulatedServerSocket(monitorConnection=true /*bool*/) {
 						kind: "chat"
 					})
 				});
-			};
                 if(USER_LEVEL > 1) {
                     if(self.loadMonitor.active) {
                         self.loadMonitor.onmessage(`${self.info}: sent message "chat" on world ${state.worldModel.name||`(main)`} with message "${msg}" in ${data.location} chat.`);
                     };
                 };
+			};
+               
 		}, 1);
 	}
 	this.close = function() {
