@@ -1,0 +1,67 @@
+<html lang="en">
+    <head>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+		<title>Private | OfflineOWOT</title>
+		<link rel="stylesheet" href="../static/css/print.css" type="text/css" media="print">
+		<link rel="shortcut icon" type="image/png" href="../static/favicon.png">
+		<link rel="stylesheet" type="text/css" href="../static/css/site.css">
+		<link rel="shortcut icon" href="../static/favicon.png">
+        <script src="../static/js/state.js"></script>
+        <script src="../static/alpine.js"></script>
+	</head>
+	<body>
+		<div class="container">
+			<div class="span-19">
+				<div id="topbar" class="span-19 last">	
+                    Logged in as <span x-text="state.userModel.username"></span>:
+					<a href="home.html">Home</a>
+                    <template x-if="state.userModel.is_superuser"><span> | <a href="administrator.html">Admin Panel</a></span></template>
+                    <template x-if="state.userModel.is_staff"><span> | <a href="script_manager.html">Script Manager</a></span></template>
+				</div>
+
+				<div class="span-19 last">
+					
+	<h1>Private</h1>
+
+				</div>
+
+				<div class="span-14">
+					
+	<div class="text">
+        <p>Sorry, the owner of that world has made it only visible to members. On OfflineOWOT, you must wait for the owner to add you.<p></p>
+	</div>
+
+				</div>
+				<div class="span-5 last">
+					&nbsp;
+				</div>
+			</div>
+		</div>
+		
+		
+		<script>
+			function addCollapsableEvent(title, cont) {
+				title.onclick = function() {
+					var disp = cont.style.display;
+					if(disp == "none") {
+						cont.style.display = "";
+					} else {
+						cont.style.display = "none";
+					}
+				}
+			}
+			function makeCollapsableSections() {
+				var sections = document.getElementsByClassName("content_set");
+				for(var i = 0; i < sections.length; i++) {
+					var sect = sections[i];
+					var titles = sect.getElementsByClassName("content_set_title");
+					var conts = sect.getElementsByClassName("content_set_content");
+					if(!titles.length || !conts.length) continue;
+					var title = titles[0];
+					var cont = conts[0];
+					addCollapsableEvent(title, cont);
+				}
+			}
+			makeCollapsableSections();
+		</script>
+</body></html>
