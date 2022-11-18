@@ -5185,16 +5185,6 @@ var ws_functions = {
             return;
         }
     },
-    tile_clear: function(data) {
-        var pos = data.tileY + "," + data.tileX;
-        if(tiles[pos]) {
-            var writability = tiles[pos].properties.writability;
-            Tile.set(data.tileX, data.tileY, blankTile());
-            tiles[pos].initted = true;
-            tiles[pos].properties.writability = writability;
-            renderTile(data.tileX, data.tileY);
-        }
-    },
     chat: function(data) {
         var type = chatType(data.registered, data.nickname, data.realUsername);
         w.emit("chat", {
