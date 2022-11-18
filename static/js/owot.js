@@ -1,3 +1,7 @@
+if(WORLD_LEVEL < state.worldModel.writability) {
+    location.href = "./private.html";
+}
+
 var YourWorld = {
     Color: window.localStorage ? +localStorage.getItem("color") : 0,
     Nickname: state.userModel.username
@@ -21,18 +25,22 @@ function init_dom() {
         textInput: textInput,
         textLayer: textLayer
     });
-}
+};
 function getWndWidth() {
     return document.body.clientWidth;
-}
+};
 function getWndHeight() {
     return document.body.clientHeight;
-}
+};
 function deviceRatio() {
     var ratio = window.devicePixelRatio;
     if(!ratio) ratio = 1;
     return ratio;
-}
+};
+
+function isInvalidWorldname(name) {
+    return (/[^\d,\w,\.,\-,\/]/gm.test(name));
+};
 
 var enums = {};
 function makeEnum(vars) {
@@ -116,7 +124,8 @@ var keyConfig = {
     cursorDown: "DOWN+*",
     cursorLeft: "LEFT+*",
     cursorRight: "RIGHT+*",
-    copyRegion: ["ALT+G", "CTRL+A"]
+    copyRegion: ["ALT+G", "CTRL+A"],
+    centerTeleport: "HOME"
 };
 
 var clientOnload = [];
@@ -1259,6 +1268,9 @@ function onKeyUp(e) {
     }
     if(checkKeyPress(e, keyConfig.cursorRight)) { // arrow right
         autoArrowKeyMoveStop("right");
+    }
+    if(checkKeyPress(e, keyConfig.centerTeleport)) {
+        w.doGoToCoord(0, 0);
     }
 }
 document.body.addEventListener("keyup", onKeyUp);
@@ -2483,7 +2495,6 @@ function stopPasting() {
     clearInterval(pasteInterval);
     write_busy = false;
 }
-//im gay
 
 var autoArrowKeyMoveInterval = null;
 var autoArrowKeyMoveActive = false;
@@ -3693,7 +3704,7 @@ var base64table = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz012345678
 */
 function decodeCharProt(str) {
     var res = new Array(tileArea).fill(0);
-    var encoding = str.charAt(0);
+    var encoding = str[0];
     str = str.substr(1);
     if(encoding == "@") {
         for(var i = 0; i < str.length; i++) {
@@ -4506,12 +4517,13 @@ var network = {
         let str = rt?"2::@":"2::";
         socket.send(str);
     },
-    clear_tile: function(x, y, clearProt=false) {
+    clear_tile: function(x, y, char=" ", clearProt=false) {
         w.socket.send(JSON.stringify({
             kind: "clear_tile",
             tileX: x,
             tileY: y,
-            clearProt
+            clearProt,
+            char
         }));
     }
 };
@@ -5155,8 +5167,8 @@ var ws_functions = {
         }
     },
     channel: function(data) {
-        w.socketChannel = data.sender;
-        w.clientId = data.id;
+        socket.socket.cli_channel = data.sender;
+        socket.socket.cli_id = data.id;
         w.userCount = data.initial_user_count;
         updateUserCount();
     },
