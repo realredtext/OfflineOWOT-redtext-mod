@@ -2229,6 +2229,54 @@ function spliceArray(array, A, B) {
     }
 }
 
+function loadBackgroundData(cb, timeout_cb) {
+	if(!backgroundEnabled || !state.background) {
+		return cb();
+	}
+	var backPath = state.background.path;
+	var backImgElm = new Image();
+	var error = false;
+	var timeout = false;
+	var loadTimeout = setTimeout(function() {
+		timeout = true;
+		cb();
+	}, 300);
+	backImgElm.src = backPath;
+	backImgElm.onload = function() {
+		clearTimeout(loadTimeout);
+		if(error) {
+			if(!timeout) cb();
+			return;
+		}
+		backgroundImage = backImgElm;
+		backgroundPattern = owotCtx.createPattern(backImgElm, "repeat");
+		backgroundPatternSize = [backImgElm.width, backImgElm.height];
+		if(timeout) {
+			// if it eventually loads after timing out
+			if(timeout_cb) timeout_cb();
+		} else {
+			cb();
+		}
+	}
+	backImgElm.onerror = function() {
+		error = true;
+		backImgElm.onload();
+	}
+}
+
+const setBG = (bgImage) => {
+	if(USER_LEVEL < 2) return;
+    state.background = {
+        path: bgImage
+    };
+
+    loadBackgroundData(() => {
+        w.redraw();
+    }, () => {
+        w.redraw();
+    });
+};
+
 function spaceTrim(str_array, left, right, gaps, secondary_array) {
     // secondary_array is an optional argument where elements are trimmed in parallel with str_array
     var marginLeft = 0;
