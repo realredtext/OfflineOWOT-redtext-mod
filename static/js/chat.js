@@ -10,6 +10,7 @@ var chatWriteHistoryIdx  = -1; // location in chat write history
 var serverPingTime       = 0;
 var chatLimitCombChars   = true;
 var chatEmotes           = true;
+var redHighlight		 = true;
 var chatWriteTmpBuffer   = "";
 var defaultChatColor     = window.localStorage ? parseInt(localStorage.getItem("chatcolor")) : null; // 24-bit Uint
 
@@ -613,7 +614,7 @@ var emoteList = {
     * "anon"      :: unregistered
     * "user_nick" :: registered renamed nick
 */
-function addChat(chatfield, id, type="user", nickname, message, realUsername, op, admin, staff, color, date=Date.now(), dataObj) {
+function addChat(chatfield, id, type, nickname, message, realUsername, op, admin, staff, color, date, dataObj) {
     if(!dataObj) dataObj = {};
     if(!nickname) nickname = "";
     if(!message) message = "";
@@ -630,6 +631,7 @@ function addChat(chatfield, id, type="user", nickname, message, realUsername, op
         field = getChatfield();
     }
     var pm = dataObj.privateMessage;
+	var highlighted = false;
 
     if(chatLimitCombChars) {
         message = w.split(message);
@@ -638,6 +640,11 @@ function addChat(chatfield, id, type="user", nickname, message, realUsername, op
         }
         message = message.join("");
     }
+	
+	if(redHighlight && message[0] == ">" && !(":;_-".includes(message[1]))) { // exception to some emoticons
+		message = message.substr(1);
+		highlighted = true;
+	}
 
     if(!op) message = html_tag_esc(message);
     if(!op) nickname = html_tag_esc(nickname);
@@ -729,6 +736,10 @@ function addChat(chatfield, id, type="user", nickname, message, realUsername, op
             pmDom.innerText = "Me -> ";
         }
     };
+	
+	if(highlighted && !type.includes("anon")) {
+		message = `<b style="background-color: #FFDDDD">&gt;${message}</b>`
+	}
     
     	emote_parse: if(chatEmotes) {
 		var emote_split = message.split(":");
