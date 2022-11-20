@@ -5326,4 +5326,34 @@ let tile_storage = {
             tiles = {};
         }
     }
-}
+};
+
+let onmouseswipe = (elmnt, mouseover, mouseleave) => {
+    elmnt.onmouseover = mouseover;
+    elmnt.onmouseleave = mouseleave;
+};
+
+const chatTab = byId("chat_open");
+chatTab.style.cursor = "pointer";
+chatTab.style.backgroundColor = "#008";
+
+onmouseswipe(chatTab, () => {
+    chatTab.style.backgroundColor = "#00A";
+}, () => {
+    chatTab.style.backgroundColor = "#008";
+});
+
+const closeChatBtn = byId("chat_close");
+closeChatBtn.style.cursor = "pointer";
+
+onmouseswipe(closeChatBtn, () => {
+    closeChatBtn.style.backgroundColor = "#F66";
+}, () => {
+    closeChatBtn.style.backgroundColor = "#F00";
+});
+
+const globalBtn = byId("chat_global_tab");
+const pageBtn = byId("chat_page_tab");
+
+globalBtn.style.cursor = "pointer";
+pageBtn.style.cursor = "pointer";
