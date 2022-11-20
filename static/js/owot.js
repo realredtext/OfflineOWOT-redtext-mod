@@ -2264,10 +2264,10 @@ function loadBackgroundData(cb, timeout_cb) {
 	}
 }
 
-const setBG = (bgImage) => {
+const setBackground = (image) => {
 	if(USER_LEVEL < 2) return;
     state.background = {
-        path: bgImage
+        path: image
     };
 
     loadBackgroundData(() => {
@@ -4509,10 +4509,10 @@ var network = {
             type: type
         }));
     },
-    cmd: function(data, include_username) {
+    cmd: function(msg, include_username) {
         w.socket.send(JSON.stringify({
             kind: "cmd",
-            data: data, // maximum length of 2048
+            msg: msg, // maximum length of 2048
             include_username: include_username
         }));
     },
@@ -4746,8 +4746,8 @@ Object.assign(w, {
         w.receivingBroadcasts = true;
         network.cmd_opt();
     },
-    broadcastCommand: function(data, includeUsername) {
-        network.cmd(data, includeUsername);
+    broadcastCommand: function(msg, includeUsername) {
+        network.cmd(msg, includeUsername);
     },
     redraw: function() {
         // redraw all tiles, clearing the cache
@@ -4932,6 +4932,10 @@ if (state.announce) {
     w._ui.announce_text.innerHTML = w._state.announce;
     w._ui.announce.style.display = "";
 }
+
+w.on("cmd", (e) => {
+	console.log(e.msg);
+});
 
 w._ui.announce_close.onclick = function() {
     w._ui.announce.style.display = "none";
@@ -5276,7 +5280,9 @@ var ws_functions = {
         }
     },
     cmd: function(data) {
-        w.emit("cmd", data);
+        if(w.receivingBroadcasts) {
+			w.emit("cmd", data)
+		}
     },
     error: function(data) {
         var code = data.code;
