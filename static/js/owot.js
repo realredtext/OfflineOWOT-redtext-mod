@@ -4933,9 +4933,17 @@ if (state.announce) {
     w._ui.announce.style.display = "";
 }
 
-w.on("cmd", (e) => {
+function onCmd(e) {
 	console.log(e.msg);
-});
+}
+
+function setCmdOnmessage(fn) {
+	if(typeof fn != "function") throw new TypeError("Desired onmessage event is not a function!");
+	onCmd = fn;
+	w.events.cmd[0] = fn;
+}
+
+w.on("cmd", onCmd);
 
 w._ui.announce_close.onclick = function() {
     w._ui.announce.style.display = "none";
