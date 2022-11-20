@@ -308,23 +308,63 @@ function SimulatedServerSocket(monitorConnection=true /*bool*/) {
                     };
                 };
  			}
+			if(data.kind == "cmd_opt") {
+				w.broadcastReceive(1);
+			}
+			if(data.kind == "cmd") {
+				var time = Date.now();
+				var msg = data.msg;
+				if(USER_LEVEL < 2) msg = msg.slice(0, 2048);
+				var includeUsername = data.include_username;
+				var sender = self.cli_channel;
+				var username;
+				if(includeUsername) {
+					username = state.userModel.username;
+				};
+				var msgObj = {
+					kind: "cmd",
+					source: "cmd",
+					msg: msg
+				};
+				
+				if(includeUsername) {
+					msgObj.username = username;
+				}
+				self.onmessage({
+					data: JSON.stringify(msgObj)
+				});
+				
+				if(USER_LEVEL > 1) {
+					if(self.loadMonitor.active) {
+						self.loadMonitor.onmessage(`${self.info}: ${includeUsername?username:``} sent message "cmd" with data \"${msg}\" at ${create_date(time)}`);
+					}
+				}
+			}
             if(data.kind == "lock_tile") {
-                const locData = {
-                    ty: data.tileY,
-                    tx: data.tileX
-                };
-                
-                if(!tiles[`${locData.ty},${locData.tx}`]) return;
-                var canLock = USER_LEVEL >= 2 || WORLD_LEVEL === 2;
-                if(!canLock) return;
-                
-                tiles[`${locData.ty},${locData.tx}`].properties.writability = -1;
-                tiles[`${locData.ty},${locData.tx}`].backgroundColor = "#ccc";
-                tiles[`${locData.ty},${locData.tx}`].properties.char = new Array(128).fill(-1);
-                //couldnt lock tiles with locked chars in them without this mod
-                renderTile(locData.tx, locData.ty, true);
-                self.onmessage({
+    			if(USER_LEVEL < 2 || WORLD_LEVEL < 2) return; 
+    			var tileX = data.tileX;
+    			var tileY = data.tileY;
+    			var charX = data.charX;
+    			var charY = data.charY;
+    			var precise = data.precise;
+    
+    			var tile = tile_database[tileY+","+tileX] || tiles[tileY+","+tileX];
+    			if(precise) {
+        			var pchardata = tile.properties.char
+        			if(pchardata) {
+            			pchardata = pchardata.split(",").map(Number);
+        			} else {
+            			pchardata = new Array(128).fill(null);
+        			};
+        			pchardata[(charY * 16) + charX] = -1;
+        			tile.properties.char = pchardata.join(",");
+    			} else {
+        			delete tile.properties.char;
+        			tile.properties.writability = -1;
+    			};
+    			self.onmessage({
 					data: JSON.stringify({
+						channel: self.cli_channel,
 						kind: "tileUpdate",
 						source: "write",
 						tiles: {
@@ -332,12 +372,13 @@ function SimulatedServerSocket(monitorConnection=true /*bool*/) {
 						}
 					})
 				});
-                if(USER_LEVEL > 1) {
+				
+				if(USER_LEVEL > 1) {
                     if(self.loadMonitor.active) {
-                        self.loadMonitor.onmessage(`${self.info}: sent 'lock_tile' on world ${state.worldModel.name||`(main)`} on tile ${locData.tx}, ${locData.ty}`);
+                        self.loadMonitor.onmessage(`${self.info}: sent "lock_tile" on world '${state.worldModel.name||`(main)`}' on tile ${tileX}, ${tileY} {precise: ${precise||false}${precise?`, on char ${charX}, ${charY}`:``}}`);
                     };
-                };
-            };
+                }
+			};
 			if(data.kind == "protect") {
 				var pdata = data.data;
 				var action = data.action;
@@ -483,7 +524,7 @@ function SimulatedServerSocket(monitorConnection=true /*bool*/) {
 						kind: "chat"
 					})
 				});
-                if(USER_LEVEL > 1) {
+                 if(USER_LEVEL > 1) {
                     if(self.loadMonitor.active) {
                         self.loadMonitor.onmessage(`${self.info}: sent message "chat" on world ${state.worldModel.name||`(main)`} with message "${msg}" in ${data.location} chat.`);
                     };
